@@ -15,4 +15,8 @@ This example R Markdown document showcases the type of analysis that can be incl
 * Jupyter Notebooks
 * R Markdown
 
+## Click image and publish to Connect Cloud
+[<img src="https://github.com/user-attachments/assets/b4b573cc-ab0f-4ab2-a63b-1e87756e642a">](https://connect.posit.cloud/publish?contentType=rmarkdown&sourceRepositoryURL=https%3A%2F%2Fgithub.com%2Fposit-hosted%2Fexamples-rmarkdown&sourceRef=main&sourceRefType=branch&primaryFile=colors_document.Rmd)
+
+
 Create a [free account](https://connect.posit.cloud/), visit the [documentation](https://docs.posit.co/connect-cloud/), and join the [community](https://forum.posit.co/c/posit-professional-hosted/posit-connect-cloud/67). 
