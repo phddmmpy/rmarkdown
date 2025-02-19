@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - main  # Trigger the workflow on PR to main branch
-  workflow_dispatch:
 
 jobs:
   deploy:
@@ -25,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           R -e "install.packages(c('remotes', 'rmarkdown'))"
-          R -e "remotes::install_github('rstudio/connectapi')"
+          R -e "remotes::install_github('rstudio/connectapi', auth = Sys.getenv('GITHUB_TOKEN'))"
 
       - name: Render the RMarkdown file
         run: |
