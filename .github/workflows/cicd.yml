@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c("rsconnect", "rmarkdown")) # Add other necessary packages
+          Rscript -e 'install.packages(c("rsconnect", "rmarkdown", "shiny", "plumber"), repos="https://cran.rstudio.com/")'
           if (file.exists("manifest.json")) {
             install.packages("packrat")
             packrat::restore()
