@@ -1,0 +1,48 @@
+name: Deploy to Posit Connect
+
+on:
+  push:
+    branches:
+      - main  # Or your primary branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.2.0' # Or your desired R version
+
+      - name: Install dependencies
+        run: |
+          install.packages(c("rsconnect", "rmarkdown")) # Add other necessary packages
+          if (file.exists("manifest.json")) {
+            install.packages("packrat")
+            packrat::restore()
+          }
+
+      - name: Deploy to Posit Connect
+        run: |
+          library(rsconnect)
+          rsconnect::setAccountInfo(
+            name   = "your-account-name", # Replace with your account name on Posit Connect
+            token  = Sys.getenv("POSIT_CONNECT_API_KEY"),
+            secret = "" # API keys don't use a secret
+          )
+          
+          # Deploy the R Markdown document(s)
+          rsconnect::deployApp(
+            appDir = ".", # Or a specific subdirectory if your Rmd files are there
+            appName = "your-app-name", # Replace with the desired application name in Connect
+            server = Sys.getenv("POSIT_CONNECT_SERVER"),
+            appFiles = c("your_report.Rmd", "manifest.json") # Specify files to deploy, include manifest
+          )
+
+        env:
+          POSIT_CONNECT_API_KEY: ${{ secrets.POSIT_CONNECT_API_KEY }}
+          POSIT_CONNECT_SERVER: ${{ secrets.POSIT_CONNECT_SERVER }}
