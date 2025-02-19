@@ -41,4 +41,5 @@ jobs:
             https://connect.posit.cloud/__api__/v1/assets  # Change the URL if needed
 
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Pass GitHub token as an environment variable
           POSIT_CONNECT_TOKEN: ${{ secrets.POSIT_CONNECT_TOKEN }}  # GitHub secret for Posit Connect Token
