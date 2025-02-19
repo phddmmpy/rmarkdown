@@ -24,7 +24,8 @@ jobs:
       - name: Install dependencies
         run: |
           R -e "install.packages(c('remotes', 'rmarkdown'))"
-          R -e "remotes::install_github('rstudio/connectapi', auth = Sys.getenv('GITHUB_TOKEN'))"
+          R -e "gitcreds::gitcreds_set()"
+          R -e "remotes::install_github('rstudio/connectapi')"
 
       - name: Render the RMarkdown file
         run: |
