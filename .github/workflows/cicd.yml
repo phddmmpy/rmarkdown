@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main  # Trigger the workflow on PR to main branch
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -23,8 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c('remotes', 'rmarkdown'))
-          remotes::install_github("rstudio/connectapi")
+          R -e "install.packages(c('remotes', 'rmarkdown'))"
+          R -e "remotes::install_github('rstudio/connectapi')"
 
       - name: Render the RMarkdown file
         run: |
@@ -40,4 +41,4 @@ jobs:
             https://connect.posit.cloud/__api__/v1/assets  # Change the URL if needed
 
         env:
-          POSIT_CONNECT_TOKEN: ${{ secrets.POSIT_CONNECT_API_KEY }}  # GitHub secret for Posit Connect Token
+          POSIT_CONNECT_TOKEN: ${{ secrets.POSIT_CONNECT_TOKEN }}  # GitHub secret for Posit Connect Token
