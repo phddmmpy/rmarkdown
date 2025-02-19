@@ -1,48 +1,43 @@
-name: Deploy to Posit Connect
+name: Deploy RMarkdown to Posit Connect
 
 on:
   push:
     branches:
-      - main  # Or your primary branch
+      - main  # Trigger the workflow on push to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger the workflow on PR to main branch
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    
+    runs-on: ubuntu-latest  # Run on Ubuntu Linux
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
-          r-version: '4.2.0' # Or your desired R version
+          r-version: '4.2'  # Specify the R version you are using
 
       - name: Install dependencies
         run: |
-          Rscript -e 'install.packages(c("rsconnect", "rmarkdown", "shiny", "plumber"), repos="https://cran.rstudio.com/")'
-          if (file.exists("manifest.json")) {
-            install.packages("packrat")
-            packrat::restore()
-          }
+          install.packages(c('remotes', 'rmarkdown'))
+          remotes::install_github("rstudio/connectapi")
+
+      - name: Render the RMarkdown file
+        run: |
+          Rscript -e "rmarkdown::render('your_file.Rmd')"  # Replace with the actual file name
 
       - name: Deploy to Posit Connect
         run: |
-          library(rsconnect)
-          rsconnect::setAccountInfo(
-            name   = "your-account-name", # Replace with your account name on Posit Connect
-            token  = Sys.getenv("POSIT_CONNECT_API_KEY"),
-            secret = "" # API keys don't use a secret
-          )
-          
-          # Deploy the R Markdown document(s)
-          rsconnect::deployApp(
-            appDir = ".", # Or a specific subdirectory if your Rmd files are there
-            appName = "your-app-name", # Replace with the desired application name in Connect
-            server = Sys.getenv("POSIT_CONNECT_SERVER"),
-            appFiles = c("your_report.Rmd", "manifest.json") # Specify files to deploy, include manifest
-          )
+          curl -X POST \
+            -F "content=@your_file.html" \
+            -F "name=your_file" \
+            -F "publish=TRUE" \
+            -H "Authorization: Bearer ${{ secrets.POSIT_CONNECT_TOKEN }}" \
+            https://connect.posit.cloud/__api__/v1/assets  # Change the URL if needed
 
         env:
-          POSIT_CONNECT_API_KEY: ${{ secrets.POSIT_CONNECT_API_KEY }}
-          POSIT_CONNECT_SERVER: ${{ secrets.POSIT_CONNECT_SERVER }}
+          POSIT_CONNECT_TOKEN: ${{ secrets.POSIT_CONNECT_API_KEY }}  # GitHub secret for Posit Connect Token
